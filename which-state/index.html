@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bharat Darshan 🇮🇳 — Which Indian State Am I?</title>
+  <meta name="description" content="Explore the soul of every Indian state — culture, food, festivals & landscapes — through stunning AI-generated imagery. Bharat Darshan." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,700;0,800;1,700&family=Noto+Sans+Devanagari:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Particle Canvas -->
+  <canvas id="particleCanvas"></canvas>
+
+  <!-- Mandala Background -->
+  <div class="mandala-bg">
+    <div class="mandala mandala-1"></div>
+    <div class="mandala mandala-2"></div>
+    <div class="mandala mandala-3"></div>
+  </div>
+
+  <!-- Gradient Orbs -->
+  <div class="orb-layer">
+    <div class="orb orb-saffron"></div>
+    <div class="orb orb-green"></div>
+    <div class="orb orb-blue"></div>
+  </div>
+
+  <!-- ══════════ HERO HEADER ══════════ -->
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="flag-strip">
+        <span class="strip saffron-strip"></span>
+        <span class="strip white-strip">
+          <span class="chakra">☸</span>
+        </span>
+        <span class="strip green-strip"></span>
+      </div>
+
+      <div class="badge-row">
+        <span class="badge">🤖 AI Powered</span>
+        <span class="badge gold">🇮🇳 Bharat Darshan</span>
+      </div>
+
+      <h1 class="hero-title">
+        <span class="title-hindi">भारत दर्शन</span>
+        <span class="title-en">Which Indian State Am I?</span>
+      </h1>
+
+      <p class="hero-sub">
+        Pick any state or union territory of India 🇮🇳 — our AI paints a breathtaking portrait of its
+        culture, cuisine, festivals, and landscapes.
+      </p>
+
+      <div class="hero-stats">
+        <div class="stat"><span class="stat-num">28</span><span class="stat-lbl">States</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><span class="stat-num">8</span><span class="stat-lbl">Union Territories</span></div>
+        <div class="stat-div"></div>
+        <div class="stat"><span class="stat-num">∞</span><span class="stat-lbl">AI Vibes</span></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ══════════ MAIN APP ══════════ -->
+  <main class="app-container">
+
+    <!-- ── State Selector ── -->
+    <section class="card selector-card" id="selectorCard">
+      <div class="card-header">
+        <div class="card-icon">🗺️</div>
+        <div>
+          <h2 class="card-title">Choose Your State</h2>
+          <p class="card-sub">28 States · 8 Union Territories</p>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-wrap">
+        <span class="search-ico">🔍</span>
+        <input id="stateSearch" class="search-input" type="text" placeholder="Search states & UTs…" autocomplete="off" />
+        <button class="search-clear" id="searchClear" style="display:none">✕</button>
+      </div>
+
+      <!-- Category Tabs -->
+      <div class="tab-row">
+        <button class="tab active" id="tabAll" data-tab="all">All</button>
+        <button class="tab" id="tabStates" data-tab="state">States</button>
+        <button class="tab" id="tabUT" data-tab="ut">Union Territories</button>
+      </div>
+
+      <!-- Grid -->
+      <div class="states-grid" id="statesGrid"></div>
+    </section>
+
+    <!-- ── Generate Panel ── -->
+    <section class="card gen-card" id="genCard" style="display:none">
+      <div class="selected-banner" id="selectedBanner">
+        <div class="sel-left">
+          <span class="sel-emoji" id="selEmoji"></span>
+          <div>
+            <div class="sel-name" id="selName"></div>
+            <div class="sel-type" id="selType"></div>
+          </div>
+        </div>
+        <button class="pill-btn" id="changeBtn">↩ Change</button>
+      </div>
+
+      <!-- Vibe Picker -->
+      <div class="vibe-section">
+        <p class="section-label">🎨 Choose What to Capture</p>
+        <div class="chip-grid" id="chipGrid">
+          <button class="chip active" data-v="culture">🎭 Culture</button>
+          <button class="chip active" data-v="food">🍽️ Cuisine</button>
+          <button class="chip active" data-v="landscape">🏔️ Landscape</button>
+          <button class="chip" data-v="festivals">🎉 Festivals</button>
+          <button class="chip" data-v="architecture">🏛️ Architecture</button>
+          <button class="chip" data-v="wildlife">🦚 Wildlife</button>
+          <button class="chip" data-v="crafts">🪡 Art & Crafts</button>
+          <button class="chip" data-v="dance">💃 Classical Dance</button>
+          <button class="chip" data-v="spirituality">🕉️ Spirituality</button>
+          <button class="chip" data-v="nightlife">🌙 Nightlife</button>
+        </div>
+      </div>
+
+      <!-- Style Picker -->
+      <div class="style-section">
+        <p class="section-label">🖼️ Art Style</p>
+        <div class="style-grid" id="styleGrid">
+          <button class="style-opt selected" data-style="photorealistic">📸 Photorealistic</button>
+          <button class="style-opt" data-style="cinematic">🎬 Cinematic</button>
+          <button class="style-opt" data-style="watercolor">🎨 Watercolor</button>
+          <button class="style-opt" data-style="oil painting">🖼️ Oil Painting</button>
+          <button class="style-opt" data-style="digital art">💻 Digital Art</button>
+          <button class="style-opt" data-style="vintage poster">📯 Vintage Poster</button>
+          <button class="style-opt" data-style="neon art">💜 Neon Art</button>
+          <button class="style-opt" data-style="miniature painting">🎎 Miniature Painting</button>
+        </div>
+      </div>
+
+      <!-- Generate CTA -->
+      <button class="gen-btn" id="genBtn">
+        <span class="gen-btn-glow"></span>
+        <span class="gen-btn-icon">✨</span>
+        <span class="gen-btn-text">Generate AI Vibe Image</span>
+        <span class="gen-btn-arrow">→</span>
+      </button>
+    </section>
+
+    <!-- ── Result Card ── -->
+    <section class="card result-card" id="resultCard" style="display:none">
+      <div class="result-topbar">
+        <div class="result-title" id="resultTitle"></div>
+        <div class="result-tags" id="resultTags"></div>
+      </div>
+
+      <!-- Image Area -->
+      <div class="img-wrap" id="imgWrap">
+
+        <!-- Loader -->
+        <div class="loader-wrap" id="loaderWrap">
+          <div class="rangoli-spinner">
+            <div class="r-ring r1"></div>
+            <div class="r-ring r2"></div>
+            <div class="r-ring r3"></div>
+            <div class="r-ring r4"></div>
+            <div class="r-core">🇮🇳</div>
+          </div>
+          <p class="loader-title">AI is painting <span id="loaderState"></span>…</p>
+          <div class="loader-bar-bg">
+            <div class="loader-bar-fill" id="loaderBar"></div>
+          </div>
+          <p class="loader-prompt" id="loaderPrompt"></p>
+        </div>
+
+        <!-- Generated Image -->
+        <img id="genImg" class="gen-img" src="" alt="" style="display:none" />
+
+        <!-- Image Overlay on hover -->
+        <div class="img-overlay" id="imgOverlay" style="display:none">
+          <a class="overlay-btn" id="dlBtn" download="bharat-darshan.png">⬇️ Download</a>
+        </div>
+      </div>
+
+      <!-- Footer Actions -->
+      <div class="result-actions" id="resultActions" style="display:none">
+
+        <div class="prompt-row">
+          <button class="ghost-btn" id="promptToggle">📝 See AI Prompt</button>
+          <div class="prompt-box" id="promptBox" style="display:none">
+            <p id="promptTxt"></p>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="act-btn primary" id="regenBtn">🔄 Regenerate</button>
+          <button class="act-btn secondary" id="newStateBtn">🗺️ New State</button>
+          <a class="act-btn accent" id="dlBtnMain" download="bharat-darshan.png">⬇️ Download</a>
+        </div>
+
+        <div class="facts-box" id="factsBox"></div>
+      </div>
+    </section>
+
+    <!-- ── Gallery ── -->
+    <section id="gallerySection" style="display:none">
+      <h3 class="gallery-heading">🖼️ Your AI Gallery</h3>
+      <div class="gallery-grid" id="galleryGrid"></div>
+    </section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="site-footer">
+    <div class="footer-chakra">☸</div>
+    <p>🇮🇳 <strong>Bharat Darshan</strong> · Powered by AI · Celebrating the soul of India</p>
+    <p class="footer-sub">Jai Hind 🙏</p>
+  </footer>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

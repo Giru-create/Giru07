@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String   @id @default(uuid())
+  clerkUserId String   @unique
+  name        String
+  email       String   @unique
+  avatar      String?
+  location    String?
+  ecoScore    Int      @default(0)
+  greenPoints Int      @default(0)
+  level       String   @default("Carbon Starter")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  records       CarbonRecord[]
+  ecoScoreObj   EcoScore?
+  verifications Verification[]
+  chatMessages  ChatMessage[]
+  challenges    UserChallenge[]
+  achievements  Achievement[]
+  posts         CommunityPost[]
+  comments      Comment[]
+  likes         Like[]
+  followers     Follow[] @relation("following")
+  following     Follow[] @relation("follower")
+  notifications Notification[]
+}
+
+model CarbonRecord {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  category  String   // Transportation, Electricity, Food, Shopping, Waste
+  amount    Float    // The raw input amount (e.g., km traveled, kWh used)
+  unit      String   // km, kWh, kg, etc.
+  co2e      Float    // Calculated CO2 equivalent in kg
+  date      DateTime @default(now())
+  source    String   // Manual, Receipt, API, etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model EcoScore {
+  id          String   @id @default(uuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  score       Int      @default(0) // 0-100
+  history     Json     // Store historical scores over time (e.g., [{date, score}])
+  updatedAt   DateTime @updatedAt
+}
+
+model Verification {
+  id            String   @id @default(uuid())
+  userId        String
+  user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  imageUrl      String
+  activityType  String   // e.g., "Tree Plantation", "Recycling"
+  confidence    Float    // Gemini Vision confidence score
+  pointsAwarded Int
+  status        String   @default("pending") // pending, approved, rejected
+  createdAt     DateTime @default(now())
+}
+
+model ChatMessage {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role      String   // "user" or "assistant"
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Challenge {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  xpReward    Int
+  gpReward    Int
+  difficulty  String   // Easy, Medium, Hard
+  type        String   // Weekly, Monthly
+  users       UserChallenge[]
+}
+
+model UserChallenge {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  challengeId String
+  challenge   Challenge @relation(fields: [challengeId], references: [id], onDelete: Cascade)
+  status      String   @default("active") // active, completed
+  progress    Int      @default(0)
+  createdAt   DateTime @default(now())
+}
+
+model Achievement {
+  id          String   @id @default(uuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badgeName   String   // First Verification, Eco Explorer, etc.
+  earnedAt    DateTime @default(now())
+}
+
+model CommunityPost {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  imageUrl  String?
+  likes     Like[]
+  comments  Comment[]
+  createdAt DateTime @default(now())
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  createdAt DateTime @default(now())
+}
+
+model Like {
+  id        String   @id @default(uuid())
+  postId    String
+  post      CommunityPost @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Follow {
+  id          String   @id @default(uuid())
+  followerId  String
+  follower    User     @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  followingId String
+  following   User     @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String   // challenge_reminder, new_follower, level_up
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+}
